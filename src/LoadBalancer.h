@@ -1,9 +1,11 @@
 #include <vector>
+#include <dirent.h>
 #include <string>
 #define ASCEND "ascend"
 #define DESCEND "descend"
 #define PROCESS_COUNT "prc_cnt"
 #define DIRECTORY "dir"
+#define DATABASE_FORMAT ".dms"
 
 
 
@@ -13,6 +15,7 @@ class LoadBalancer
   public:
     LoadBalancer(std :: string commmand);
     ~LoadBalancer();
+    void setFiles();
 
   private:
     std :: vector< std :: pair <std :: string , std :: string> > filters;
@@ -20,4 +23,7 @@ class LoadBalancer
     bool sortOrNot;
     int processCount;
     std :: string filesDirectory; 
+
+    std :: vector< std :: string > fileNames;
+    int filesCount;
 };

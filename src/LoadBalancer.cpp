@@ -6,6 +6,7 @@ using namespace std;
 
 LoadBalancer :: LoadBalancer (string command)
 {
+    filesCount = 0;
     command = Tools :: removeAllSpaces(command);
     vector < string > configs =  Tools :: splitByCharacter(command , '-');
     for (int i = 0 ; i < configs.size() ; i++)
@@ -29,6 +30,7 @@ LoadBalancer :: LoadBalancer (string command)
             filters.push_back(filter);
         }
     }
+    this -> setFiles();
     // cerr << processCount << endl;
     // cerr << filesDirectory << endl;
     // for(int i = 0  ; i < filters.size() ; i++)
@@ -42,3 +44,26 @@ LoadBalancer :: ~LoadBalancer()
 
 }
 
+
+void LoadBalancer :: setFiles()
+{
+    DIR *dir;
+    struct dirent *ent;
+    if ((dir = opendir (filesDirectory.c_str())) != NULL) {
+    while ((ent = readdir (dir)) != NULL) {
+        string fileName;
+        fileName = ent -> d_name;
+        size_t found;
+        found = fileName.find(DATABASE_FORMAT);
+        if (found != string::npos) 
+        {
+            fileNames.push_back(fileName);   
+            filesCount ++ ;
+        }
+        
+    }
+    closedir (dir);
+    } else {
+        cerr << "could not open directory" << endl;
+    } 
+}
