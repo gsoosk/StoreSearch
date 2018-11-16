@@ -1,7 +1,11 @@
-all : Search 
+all : fileDir Search 
+
+fileDir:
+	@mkdir -p build
 
 Search :  build/Main.o build/LoadBalancer.o build/Tools.o
 	@echo "Linking..."
+
 	g++ build/Main.o build/LoadBalancer.o build/Tools.o -o  Search
 
 build/Main.o : src/Main.cpp src/LoadBalancer.h src/LoadBalancer.cpp
