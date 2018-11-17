@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
-int main()
+int main(int argc, char const *argv[])
 {
-    cout << "Hello parnet world" << endl;
+    /* code */
     return 0;
 }

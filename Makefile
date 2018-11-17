@@ -3,7 +3,7 @@ all : fileDir Worker Search
 fileDir:
 	@mkdir -p build
 	@mkdir -p bin
-
+# Worker : 
 Worker : build/WorkerMain.o
 	g++ build/WorkerMain.o -o bin/Worker
 	@echo "Worker executable file maked!"
@@ -11,6 +11,8 @@ Worker : build/WorkerMain.o
 build/WorkerMain.o : src/WorkerMain.cpp
 	g++ -c src/WorkerMain.cpp -o build/WorkerMain.o
 
+
+# LoadBalancer
 Search :  build/Main.o build/LoadBalancer.o build/Tools.o
 	@echo "Linking..."
 

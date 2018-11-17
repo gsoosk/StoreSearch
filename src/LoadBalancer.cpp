@@ -7,6 +7,7 @@ using namespace std;
 LoadBalancer :: LoadBalancer (string command)
 {
     filesCount = 0;
+    filters = "";
     command = Tools :: removeAllSpaces(command);
     vector < string > configs =  Tools :: splitByCharacter(command , '-');
     for (int i = 0 ; i < configs.size() ; i++)
@@ -24,25 +25,25 @@ LoadBalancer :: LoadBalancer (string command)
         }
         else 
         {
-            pair < string, string > filter;
-            filter.first = config[0];
-            filter.second = config[1];
-            filters.push_back(filter);
+            // pair < string, string > filter;
+            // filter.first = config[0];
+            // filter.second = config[1];
+            // filters.push_back(filter);
+            if(filters != "")
+                filters += "-";
+            filters += config[0];
+            filters += "=";
+            filters += config[1];
         }
     }
     this -> setFiles();
-    // cerr << processCount << endl;
-    // cerr << filesDirectory << endl;
-    // for(int i = 0  ; i < filters.size() ; i++)
-    //     cerr << filters[i].first << "  " << filters[i].second << endl;
-    // cerr << sortOrNot << endl;
-    // cerr << sortValue.first << " " << sortValue.second << endl;
 }
 
 LoadBalancer :: ~LoadBalancer()
 {
     for(int i = 0 ; i < workers.size() ; i++)
         waitpid(workers[i], NULL, WNOHANG);
+
 }
 
 
@@ -71,7 +72,7 @@ void LoadBalancer :: setFiles()
 
 void LoadBalancer :: forkWorkers()
 {
-    for( int i = 0 ; i < processCount ; i++)
+    for( int i = 0 ; i < workerPipes.size() ; i++)
     {
         pid_t pid = fork();
         if(pid < 0)
@@ -80,12 +81,60 @@ void LoadBalancer :: forkWorkers()
         }
         else if(pid == 0)
         {
+            close(workerPipes[i][WRITE]);
             cout << EXECUTE_WORKER_MESSAGE(i) ;
-            execv(WORKER_EXEC_PATH, NULL);
+            char * argv[3];
+            argv[0] = (char*) WORKER_EXEC_PATH;
+            argv[1] = (char*) to_string(workerPipes[i][READ]).c_str();
+            argv[2] = NULL;
+            execv(argv[0], argv);
         }
         else
         {
+            close(workerPipes[i][READ]);
+            close(workerPipes[i][WRITE]);
             workers.push_back(pid);
         }
+    }
+}
+
+void LoadBalancer :: createWorkerPipes()
+{
+    for(int i = 0 ; i < processCount ; i++)
+    {
+        int fd[2];
+        if( pipe(fd) < 0 )
+        {
+            cerr << "can not create pipe " << i << endl ;
+            return ;
+        }
+        vector < int > fds;
+        fds.push_back(fd[0]);
+        fds.push_back(fd[1]);
+        workerPipes.push_back(fds);
+    }
+}
+
+void LoadBalancer :: writeOnWorkerPipes()
+{
+    vector < string > fileNamesToSend = fileNames;
+    int pipesSize = workerPipes.size();
+    int i = 0 ;
+    // writing file names
+    while(fileNamesToSend.size() > 0 )
+    {
+        if ( i == pipesSize)
+            i = 0;
+        char*toSend = (char*) fileNamesToSend[fileNamesToSend.size() - 1].c_str();
+        write(workerPipes[i][WRITE], toSend , strlen(toSend));
+        fileNamesToSend.pop_back();
+        i++;
+    }
+    //writing filters
+    for( i = 0 ; i < pipesSize ; i++)
+    {
+        write(workerPipes[i][WRITE], "#" , 2);
+        char* toSend = (char*) filters.c_str();
+        write(workerPipes[i][WRITE], toSend , strlen(toSend));
     }
 }
