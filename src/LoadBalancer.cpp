@@ -41,7 +41,8 @@ LoadBalancer :: LoadBalancer (string command)
 
 LoadBalancer :: ~LoadBalancer()
 {
-
+    for(int i = 0 ; i < workers.size() ; i++)
+        waitpid(workers[i], NULL, WNOHANG);
 }
 
 
@@ -66,4 +67,25 @@ void LoadBalancer :: setFiles()
     } else {
         cerr << "could not open directory" << endl;
     } 
+}
+
+void LoadBalancer :: forkWorkers()
+{
+    for( int i = 0 ; i < processCount ; i++)
+    {
+        pid_t pid = fork();
+        if(pid < 0)
+        {
+            cerr << "can not fork" << endl;
+        }
+        else if(pid == 0)
+        {
+            cout << EXECUTE_WORKER_MESSAGE(i) ;
+            execv(WORKER_EXEC_PATH, NULL);
+        }
+        else
+        {
+            workers.push_back(pid);
+        }
+    }
 }

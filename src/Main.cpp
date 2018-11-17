@@ -10,6 +10,7 @@ int main()
     string command;
     getline(cin, command);
     LoadBalancer loadBalancer(command);
+    loadBalancer.forkWorkers();
     
     for(getline(cin, command) ; command != "quit" ; getline(cin, command))
     {

@@ -9,7 +9,10 @@
 *.lo
 *.o
 *.obj
-
+./test
+./build
+./bin
+Search
 # Precompiled Headers
 *.gch
 *.pch
