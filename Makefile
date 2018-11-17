@@ -4,13 +4,15 @@ fileDir:
 	@mkdir -p build
 	@mkdir -p bin
 # Worker : 
-Worker : build/WorkerMain.o
-	g++ build/WorkerMain.o -o bin/Worker
+Worker : build/WorkerMain.o build/Worker.o build/Tools.o
+	g++ build/WorkerMain.o build/Worker.o build/Tools.o -o bin/Worker
 	@echo "Worker executable file maked!"
 
-build/WorkerMain.o : src/WorkerMain.cpp
+build/WorkerMain.o : src/WorkerMain.cpp src/Worker.cpp src/Worker.h
 	g++ -c src/WorkerMain.cpp -o build/WorkerMain.o
 
+build/Worker.o :  src/Worker.cpp src/Worker.h
+	g++ -c src/Worker.cpp -o build/Worker.o
 
 # LoadBalancer
 Search :  build/Main.o build/LoadBalancer.o build/Tools.o

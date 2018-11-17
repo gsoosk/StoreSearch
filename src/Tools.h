@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #define EMPTY_STRING ""
+#define END_OF_FILES "END_OF_FILES"
 class Tools
 {
 public:

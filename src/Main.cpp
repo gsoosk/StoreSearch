@@ -10,13 +10,11 @@ int main()
     string command;
     getline(cin, command);
     LoadBalancer loadBalancer(command);
-    loadBalancer.createWorkerPipes();
-    loadBalancer.writeOnWorkerPipes();
-    loadBalancer.forkWorkers();
     
-    for(getline(cin, command) ; command != "quit" ; getline(cin, command))
-    {
-        
-    }
+    loadBalancer.createWorkerPipes();
+    loadBalancer.forkWorkers();
+    loadBalancer.writeOnWorkerPipes();
+    
+    for(getline(cin, command) ; command != "quit" ; getline(cin, command)){}
     return 0;
 }

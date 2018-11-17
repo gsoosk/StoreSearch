@@ -92,7 +92,6 @@ void LoadBalancer :: forkWorkers()
         else
         {
             close(workerPipes[i][READ]);
-            close(workerPipes[i][WRITE]);
             workers.push_back(pid);
         }
     }
@@ -120,21 +119,30 @@ void LoadBalancer :: writeOnWorkerPipes()
     vector < string > fileNamesToSend = fileNames;
     int pipesSize = workerPipes.size();
     int i = 0 ;
+    vector <string> toSend(pipesSize);
+    for(int j = 0 ; j < toSend.size(); j++)
+        toSend[j] = "";
     // writing file names
     while(fileNamesToSend.size() > 0 )
     {
         if ( i == pipesSize)
             i = 0;
-        char*toSend = (char*) fileNamesToSend[fileNamesToSend.size() - 1].c_str();
-        write(workerPipes[i][WRITE], toSend , strlen(toSend));
+        toSend[i] += filesDirectory;
+        toSend[i] += "/";
+        toSend[i] += fileNamesToSend[fileNamesToSend.size() - 1]; 
+        toSend[i] += "\n";
         fileNamesToSend.pop_back();
         i++;
     }
     //writing filters
     for( i = 0 ; i < pipesSize ; i++)
     {
-        write(workerPipes[i][WRITE], "#" , 2);
-        char* toSend = (char*) filters.c_str();
-        write(workerPipes[i][WRITE], toSend , strlen(toSend));
+        toSend[i] += END_OF_FILES; 
+        toSend[i] += "\n";
+        toSend[i] += filters;
+        char* buff = (char*) toSend[i].c_str();
+        write(workerPipes[i][WRITE], buff, strlen(buff) + 1 );
+        close(workerPipes[i][WRITE]);
     }
+   
 }

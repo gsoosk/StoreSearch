@@ -19,8 +19,18 @@ int main()
     return 0;
 }
     // cerr << processCount << endl;
-    // cerr << filesDirectory << endl;
+    // // cerr << filesDirectory << endl;
     // for(int i = 0  ; i < filters.size() ; i++)
     //     cerr << filters[i].first << "  " << filters[i].second << endl;
-    // cerr << sortOrNot << endl;
-    // cerr << sortValue.first << " " << sortValue.second << endl;
+    // for(int i = 0  ; i < files.size() ; i++)
+    //     cerr << files[i] << endl;
+    // // cerr << sortOrNot << endl;
+    // // cerr << sortValue.first << " " << sortValue.second << endl;
+
+
+    //  for( int i = 0 ; i < filesContent.size() ; i++)
+    // {
+    //     for(int j = 0 ; j < filesContent[i].size() ; j++)
+    //         cout << filesContent[i][j] << " " ;
+    //     cout << endl;
+    // }

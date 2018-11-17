@@ -16,6 +16,7 @@
 
 
 
+
 class LoadBalancer
 {
 
@@ -28,7 +29,6 @@ class LoadBalancer
     void forkWorkers();
 
   private:
-    // std :: vector< std :: pair <std :: string , std :: string> > filters;
     std :: string filters;
     std :: pair < std :: string , std :: string > sortValue ;
     bool sortOrNot;
