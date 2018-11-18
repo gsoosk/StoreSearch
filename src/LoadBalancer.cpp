@@ -25,10 +25,6 @@ LoadBalancer :: LoadBalancer (string command)
         }
         else 
         {
-            // pair < string, string > filter;
-            // filter.first = config[0];
-            // filter.second = config[1];
-            // filters.push_back(filter);
             if(filters != "")
                 filters += "-";
             filters += config[0];
@@ -37,13 +33,16 @@ LoadBalancer :: LoadBalancer (string command)
         }
     }
     this -> setFiles();
+    this -> createNamedPipe();
 }
-
+void LoadBalancer :: createNamedPipe()
+{
+    mkfifo(FIFO_FILE_PATH, 0666);
+}
 LoadBalancer :: ~LoadBalancer()
 {
     for(int i = 0 ; i < workers.size() ; i++)
         waitpid(workers[i], NULL, WNOHANG);
-
 }
 
 
@@ -81,8 +80,8 @@ void LoadBalancer :: forkWorkers()
         }
         else if(pid == 0)
         {
-            close(workerPipes[i][WRITE]);
             cout << EXECUTE_WORKER_MESSAGE(i) ;
+            close(workerPipes[i][WRITE]);
             char * argv[3];
             argv[0] = (char*) WORKER_EXEC_PATH;
             argv[1] = (char*) to_string(workerPipes[i][READ]).c_str();
@@ -145,4 +144,36 @@ void LoadBalancer :: writeOnWorkerPipes()
         close(workerPipes[i][WRITE]);
     }
    
+}
+
+void LoadBalancer :: forkPresenter()
+{
+    pid_t pid = fork();
+    if(pid < 0)
+        cerr << "unable to fork presenter" << endl;
+    else if(pid == 0)
+    {
+        cout << EXECUTE_PRESENTER_MESSAGE << endl ;
+        execv(PRESENTER_EXEC_PATH, NULL);
+    }
+    else if(pid > 0)
+    {
+        presenter = pid;
+    }
+}
+
+void LoadBalancer :: sendPresenterDetails()
+{
+    /* format : 
+        <process count> 
+        <1/0> // means sort or not
+        <sortvalue = ascend / descend > */
+    string toSend = to_string(processCount);
+    toSend += "\n";
+    toSend += sortOrNot ? "1\n" : "0\n";
+    if(sortOrNot)
+        toSend += (sortValue.first + "=" + sortValue.second + "\n");
+    int fd = open(FIFO_FILE_PATH, O_WRONLY);
+    write(fd, toSend.c_str() , strlen(toSend.c_str()) + 1);
+    close(fd); 
 }

@@ -73,16 +73,7 @@ void Worker :: filterFilesContent()
             else
                 k++;
         }
-    }
-
-     for( int i = 0 ; i < filesContent.size() ; i++)
-    {
-        for(int j = 0 ; j < filesContent[i].size() ; j++)
-            cout << filesContent[i][j] << " " ;
-        cout << endl;
-    }
-
-    
+    } 
 }
 
 int Worker :: findFilterIndex(string filterName, int row)

@@ -1,11 +1,21 @@
 #include <vector>
+#include <string>
+#include <fcntl.h> 
+#include <sys/stat.h> 
+#include <sys/types.h> 
+#include <unistd.h> 
+#include "Tools.h"
 
 class Presenter
 {
   public:
-    Presenter(/* args */) {}
-    ~Presenter() {}
+    Presenter() ;
+    ~Presenter() ;
 
   private:
-    /* data */
+    int processCount;
+    bool sort;
+    bool ascend;
+    std :: string sortValue ;
+    
 };
