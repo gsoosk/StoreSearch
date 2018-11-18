@@ -11,8 +11,10 @@ Worker :: Worker (int pipeFd)
     while(inputs[i] != END_OF_FILES)
     {
         files.push_back(inputs[i]);
+        // cerr << inputs[i] << " ";
         i++;
     }
+    // cerr << getpid() << endl;
     i++;
     this -> getFilters(inputs[i]);
 }
@@ -36,7 +38,8 @@ void Worker :: getFileContents()
     {
         string line ;
         ifstream file(files[i]);
-        getline(file, line);
+        if(!getline(file, line))
+            return ;
         if(!headerAdded)
         {
             filesContent.push_back( Tools :: splitByCharacter(line, ' '));
@@ -46,23 +49,50 @@ void Worker :: getFileContents()
             filesContent.push_back( Tools :: splitByCharacter(line, ' '));
         file.close();
     }
+     
    
 }
 
-void Worker :: filterFileContents()
+void Worker :: filterFilesContent()
 {
     for(int i = 0 ; i < filters.size() ; i++)
     {
-        int j = this -> findFilterIndex(filters[i].first);
+        if(filesContent.size() == 0)
+            return ;
+        int j = this -> findFilterIndex(filters[i].first, 0);
+        if(j < 0)
+        {
+            cerr << "filter not found " << filters[i].first << endl;
+            return ;
+        }
+        int k = 1;
+        while( k != filesContent.size())
+        {
+            if(filesContent[k][j] != filters[i].second)
+                filesContent.erase (filesContent.begin()+k);
+            else
+                k++;
+        }
     }
+
+     for( int i = 0 ; i < filesContent.size() ; i++)
+    {
+        for(int j = 0 ; j < filesContent[i].size() ; j++)
+            cout << filesContent[i][j] << " " ;
+        cout << endl;
+    }
+
+    
 }
 
-int Worker :: findFilterIndex(string filterName)
+int Worker :: findFilterIndex(string filterName, int row)
 {
-    for(int i = 0 ; i < filesContent[0].size() ; i++)
+    for(int i = 0 ; i < filesContent[row].size() ; i++)
     {
-        
+        if(filesContent[0][i] == filterName)
+            return i;
     }
+    return -1;
 }
 Worker :: ~Worker()
 {

@@ -5,7 +5,7 @@ int main(int argc, char const *argv[])
 {
     Worker worker(atoi(argv[1]));
     worker.getFileContents();
-    worker.filterFileContents();
+    worker.filterFilesContent();
 
     return 0;
 }

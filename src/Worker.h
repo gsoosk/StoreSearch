@@ -12,7 +12,7 @@ class Worker
   public:
     Worker(int pipeFd);
     void getFileContents();
-    void filterFileContents();
+    void filterFilesContent();
     ~Worker();
 
   private:
@@ -21,7 +21,7 @@ class Worker
     void getFilters(std :: string allFilters);
 
     std :: vector < std :: vector < std :: string > > filesContent;
-    int findFilterIndex(std :: string);
+    int findFilterIndex(std :: string, int row);
     
     
 };
