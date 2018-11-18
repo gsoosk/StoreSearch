@@ -2,6 +2,7 @@
 using namespace std;
 Worker :: Worker (int pipeFd)
 {
+    this -> givePermissonToWrite();
     char buff[2048];
     read(pipeFd, buff, 2048);
     close(pipeFd);
@@ -84,6 +85,83 @@ int Worker :: findFilterIndex(string filterName, int row)
             return i;
     }
     return -1;
+}
+
+void Worker :: sendContentsToPresenter()
+{
+    string toSend = "";
+    for (int i = 1 ; i < filesContent.size() ; i++)
+    {
+        for(int j = 0 ; j < filesContent[i].size() ; j++)
+        {
+            toSend += filesContent[i][j];
+            if(j == filesContent[i].size() - 1)
+                toSend += "\n";
+            else
+                toSend += " ";
+        }
+    }
+    toSend += "-process-details-\n";
+    // cerr << "opening from worker " << endl;
+
+    while(!this -> havePermissionToWrite()) 
+    {
+        usleep(10000);
+    }
+
+    // this -> getPermissionToWrite();
+    // sleep(1);
+    int fd = open(FIFO_FILE_PATH, O_WRONLY);
+    int x = write(fd, toSend.c_str() , strlen(toSend.c_str()) + 1);
+    close(fd);
+    this -> givePermissonToWrite();
+}
+bool Worker :: havePermissionToWrite()
+{
+    /* the size (in bytes) of shared memory object */
+    const int SIZE = 128; 
+    const char* name = "permission"; 
+    int shm_fd; 
+    void* ptr;
+    void* ptrW; 
+    shm_fd = shm_open(name, O_CREAT | O_RDWR, 0666);
+    ptr = mmap(0, SIZE, PROT_READ, MAP_SHARED, shm_fd, 0); 
+    string permission = (char*) ptr;
+    cerr << permission << endl;
+    if(permission == "ok")
+    {
+        this -> getPermissionToWrite();
+        return true;  
+    }
+       
+    // shm_unlink(name); 
+    return false;
+}
+void Worker :: getPermissionToWrite()
+{
+    const int SIZE = 128; 
+    const char* name = "permission"; 
+    const char* message = "nok"; 
+    int shm_fd; 
+    void* ptr; 
+    shm_fd = shm_open(name, O_CREAT | O_RDWR, 0666); 
+    ftruncate(shm_fd, SIZE); 
+    ptr = mmap(0, SIZE, PROT_WRITE, MAP_SHARED, shm_fd, 0); 
+    char* p = (char*) ptr;
+    sprintf(p, "%s", message); 
+}
+void Worker :: givePermissonToWrite()
+{
+    const int SIZE = 128; 
+    const char* name = "permission"; 
+    const char* message = "ok"; 
+    int shm_fd; 
+    void* ptr; 
+    shm_fd = shm_open(name, O_CREAT | O_RDWR, 0666); 
+    ftruncate(shm_fd, SIZE); 
+    ptr = mmap(0, SIZE, PROT_WRITE, MAP_SHARED, shm_fd, 0); 
+    char* p = (char*) ptr;
+    sprintf(p, "%s", message); 
 }
 Worker :: ~Worker()
 {

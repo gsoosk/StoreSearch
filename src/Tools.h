@@ -5,6 +5,8 @@
 #define EMPTY_STRING ""
 #define END_OF_FILES "END_OF_FILES"
 #define FIFO_FILE_PATH "namedPipe/fifo"
+
+
 class Tools
 {
 public:
