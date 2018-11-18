@@ -44,4 +44,5 @@ build/LoadBalancer.o : src/LoadBalancer.cpp src/LoadBalancer.h
 clean : 
 	rm -f -r build
 	rm -f -r bin
+	rm -f -r namedPipe
 	rm -f Search

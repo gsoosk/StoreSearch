@@ -3,8 +3,15 @@
 #include <string>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <fcntl.h>
 #include <unistd.h>
+#include <sys/shm.h> 
 #include <fstream>
+#include <stdlib.h> 
+#include <sys/stat.h> 
+#include <unistd.h>
+#include <sys/mman.h>
+#include <stdio.h>
 #include "Tools.h"
 class Worker
 {
@@ -13,6 +20,12 @@ class Worker
     Worker(int pipeFd);
     void getFileContents();
     void filterFilesContent();
+    void sendContentsToPresenter();
+
+    bool havePermissionToWrite();
+    void getPermissionToWrite();
+    void givePermissonToWrite();
+    
     ~Worker();
 
   private:
