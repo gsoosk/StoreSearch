@@ -136,18 +136,18 @@ void LoadBalancer :: writeOnWorkerPipes()
     for(int j = 0 ; j < toSend.size(); j++)
         toSend[j] = "";
     // writing file names
-    // while(fileNamesToSend.size() > 0 )
-    // {
-    //     if ( i == pipesSize)
-    //         i = 0;
-    //     toSend[i] += filesDirectory;
-    //     toSend[i] += "/";
-    //     toSend[i] += fileNamesToSend[fileNamesToSend.size() - 1]; 
-    //     toSend[i] += "\n";
-    //     fileNamesToSend.pop_back();
-    //     i++;
-    // }
-    //writing filters
+    while(fileNamesToSend.size() > 0 )
+    {
+        if ( i == pipesSize)
+            i = 0;
+        toSend[i] += filesDirectory;
+        toSend[i] += "/";
+        toSend[i] += fileNamesToSend[fileNamesToSend.size() - 1]; 
+        toSend[i] += "\n";
+        fileNamesToSend.pop_back();
+        i++;
+    }
+    // writing filters
     for( i = 0 ; i < pipesSize ; i++)
     {
         toSend[i] += END_OF_FILES; 

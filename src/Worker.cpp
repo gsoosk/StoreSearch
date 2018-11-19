@@ -3,8 +3,7 @@ using namespace std;
 Worker :: Worker (int pipeFd)
 {
     char buff[2048];
-    
-    read(pipeFd, buff, 2048);
+    read(pipeFd, buff, 2048) ;
     close(pipeFd);
     string input = buff;
     vector < string > inputs = Tools :: splitByCharacter(input, '\n');
@@ -103,8 +102,10 @@ void Worker :: sendContentsToPresenter()
                 toSend += " ";
         }
     }
-    int fd = open(fifoPath.c_str(), O_WRONLY);
+    int fd = open(fifoPath.c_str(), O_WRONLY | O_NONBLOCK);
+    cerr << "w opend"<< endl;
     int x = write(fd, toSend.c_str() , strlen(toSend.c_str()) + 1);
+   
     close(fd);
 }
 

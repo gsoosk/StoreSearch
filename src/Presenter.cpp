@@ -29,6 +29,7 @@ void Presenter ::getWorkersDataAndSort()
 {
     for (int i = 0 ; i < processCount ; i++)
     {
+        
         string receiveFromWorker = this -> getWorkerData(i);
         vector < vector <string> > workerDetails = this -> getWorkerDetailsFromStr(receiveFromWorker);
         
@@ -90,12 +91,20 @@ string Presenter :: getWorkerData(int i)
 {
     string receiveFromWorker;
     string fifoPath = FIFO_FILE_PATH + to_string(workersPid[i]);
-    ifstream file(fifoPath.c_str());
+    ifstream file(fifoPath.c_str(), O_NONBLOCK);
+     
     string line ;
-    usleep(100);
+    getline(file, line);
+    while(line.length() < 3)
+    {
+        cerr << line << endl;
+        getline(file, line);
+    }
+
     while (getline(file, line))
         receiveFromWorker += (line + "\n");
     file.close(); 
+    cerr << receiveFromWorker << endl;
     return receiveFromWorker;
 }
 
