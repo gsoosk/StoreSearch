@@ -3,6 +3,7 @@ using namespace std;
 Worker :: Worker (int pipeFd)
 {
     char buff[2048];
+    
     read(pipeFd, buff, 2048);
     close(pipeFd);
     string input = buff;

@@ -14,11 +14,12 @@ int main()
 
         loadBalancer.createWorkerPipes();
         loadBalancer.forkWorkers();
+        
 
         loadBalancer.forkPresenter();
         loadBalancer.sendPresenterDetails();
-
         loadBalancer.writeOnWorkerPipes();
+        
     }
     return 0;
 }

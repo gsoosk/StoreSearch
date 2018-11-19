@@ -48,6 +48,7 @@ class LoadBalancer
     void setFiles();
     // Workers management
     std :: vector< std :: vector<int> > workerPipes;
+    std :: vector< std :: vector<int> > backWorkerPipes;
     std :: vector< pid_t > workers;
     // Presenter management
     pid_t presenter;

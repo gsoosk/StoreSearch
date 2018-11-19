@@ -83,15 +83,18 @@ void LoadBalancer :: forkWorkers()
         {
             cout << EXECUTE_WORKER_MESSAGE(i) ;
             close(workerPipes[i][WRITE]);
-            char * argv[3];
+            close(backWorkerPipes[i][READ]);
+            char * argv[4];
             argv[0] = (char*) WORKER_EXEC_PATH;
             argv[1] = (char*) to_string(workerPipes[i][READ]).c_str();
-            argv[2] = NULL;
+            argv[2] = (char*) to_string(backWorkerPipes[i][WRITE]).c_str();
+            argv[3] = NULL;
             execv(argv[0], argv);
         }
         else
         {
             close(workerPipes[i][READ]);
+            close(backWorkerPipes[i][WRITE]);
             workers.push_back(pid);
         }
     }
@@ -102,7 +105,13 @@ void LoadBalancer :: createWorkerPipes()
     for(int i = 0 ; i < processCount ; i++)
     {
         int fd[2];
+        int bfd[2];
         if( pipe(fd) < 0 )
+        {
+            cerr << "can not create pipe " << i << endl ;
+            return ;
+        }
+        if( pipe(bfd) < 0 )
         {
             cerr << "can not create pipe " << i << endl ;
             return ;
@@ -110,7 +119,11 @@ void LoadBalancer :: createWorkerPipes()
         vector < int > fds;
         fds.push_back(fd[0]);
         fds.push_back(fd[1]);
+        vector < int > bfds;
+        bfds.push_back(bfd[0]);
+        bfds.push_back(bfd[1]);
         workerPipes.push_back(fds);
+        backWorkerPipes.push_back(bfds);
     }
 }
 
@@ -123,17 +136,17 @@ void LoadBalancer :: writeOnWorkerPipes()
     for(int j = 0 ; j < toSend.size(); j++)
         toSend[j] = "";
     // writing file names
-    while(fileNamesToSend.size() > 0 )
-    {
-        if ( i == pipesSize)
-            i = 0;
-        toSend[i] += filesDirectory;
-        toSend[i] += "/";
-        toSend[i] += fileNamesToSend[fileNamesToSend.size() - 1]; 
-        toSend[i] += "\n";
-        fileNamesToSend.pop_back();
-        i++;
-    }
+    // while(fileNamesToSend.size() > 0 )
+    // {
+    //     if ( i == pipesSize)
+    //         i = 0;
+    //     toSend[i] += filesDirectory;
+    //     toSend[i] += "/";
+    //     toSend[i] += fileNamesToSend[fileNamesToSend.size() - 1]; 
+    //     toSend[i] += "\n";
+    //     fileNamesToSend.pop_back();
+    //     i++;
+    // }
     //writing filters
     for( i = 0 ; i < pipesSize ; i++)
     {
