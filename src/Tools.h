@@ -13,5 +13,8 @@ public:
     static std::string removeAllSpaces(std::string);
 	static std::vector<std::string> splitByCharacter(std::string line, char character);
 	static bool doesStringContainsChar(std::string line, char character);
+	static bool compare(std :: string , std :: string );
+	static bool isNumber(std :: string);
+	static int findSortValueIndex(std :: vector <std :: string> workerDetails, std :: string sortValue);
 };
 #endif

@@ -2,7 +2,6 @@
 using namespace std;
 Worker :: Worker (int pipeFd)
 {
-    this -> givePermissonToWrite();
     char buff[2048];
     read(pipeFd, buff, 2048);
     close(pipeFd);
@@ -12,11 +11,13 @@ Worker :: Worker (int pipeFd)
     while(inputs[i] != END_OF_FILES)
     {
         files.push_back(inputs[i]);
-        // cerr << inputs[i] << " ";
         i++;
     }
+    
     // cerr << getpid() << endl;
     i++;
+    fifoPath = FIFO_FILE_PATH + to_string(getpid());
+    mkfifo(fifoPath.c_str(), 0666);
     this -> getFilters(inputs[i]);
 }
 void Worker :: getFilters( string allFilters )
@@ -40,18 +41,18 @@ void Worker :: getFileContents()
         string line ;
         ifstream file(files[i]);
         if(!getline(file, line))
-            return ;
+            continue ;
+        
         if(!headerAdded)
         {
             filesContent.push_back( Tools :: splitByCharacter(line, ' '));
             headerAdded = true;
-        }   
+        } 
         while(getline(file, line))
             filesContent.push_back( Tools :: splitByCharacter(line, ' '));
         file.close();
-    }
-     
-   
+       
+    }   
 }
 
 void Worker :: filterFilesContent()
@@ -90,7 +91,7 @@ int Worker :: findFilterIndex(string filterName, int row)
 void Worker :: sendContentsToPresenter()
 {
     string toSend = "";
-    for (int i = 1 ; i < filesContent.size() ; i++)
+    for (int i = 0 ; i < filesContent.size() ; i++)
     {
         for(int j = 0 ; j < filesContent[i].size() ; j++)
         {
@@ -101,21 +102,12 @@ void Worker :: sendContentsToPresenter()
                 toSend += " ";
         }
     }
-    toSend += "-process-details-\n";
-    // cerr << "opening from worker " << endl;
-
-    while(!this -> havePermissionToWrite()) 
-    {
-        usleep(10000);
-    }
-
-    // this -> getPermissionToWrite();
-    // sleep(1);
-    int fd = open(FIFO_FILE_PATH, O_WRONLY);
+    int fd = open(fifoPath.c_str(), O_WRONLY);
     int x = write(fd, toSend.c_str() , strlen(toSend.c_str()) + 1);
     close(fd);
-    this -> givePermissonToWrite();
 }
+
+
 bool Worker :: havePermissionToWrite()
 {
     /* the size (in bytes) of shared memory object */
@@ -133,8 +125,6 @@ bool Worker :: havePermissionToWrite()
         this -> getPermissionToWrite();
         return true;  
     }
-       
-    // shm_unlink(name); 
     return false;
 }
 void Worker :: getPermissionToWrite()

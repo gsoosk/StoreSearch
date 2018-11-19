@@ -43,6 +43,7 @@ LoadBalancer :: ~LoadBalancer()
 {
     for(int i = 0 ; i < workers.size() ; i++)
         waitpid(workers[i], NULL, WNOHANG);
+    waitpid(presenter, NULL, WNOHANG);
 }
 
 
@@ -153,7 +154,6 @@ void LoadBalancer :: forkPresenter()
         cerr << "unable to fork presenter" << endl;
     else if(pid == 0)
     {
-        cout << EXECUTE_PRESENTER_MESSAGE << endl ;
         execv(PRESENTER_EXEC_PATH, NULL);
     }
     else if(pid > 0)
@@ -168,8 +168,10 @@ void LoadBalancer :: sendPresenterDetails()
         <process count> 
         <1/0> // means sort or not
         <sortvalue = ascend / descend > */
-    string toSend = to_string(processCount);
-    toSend += "\n";
+    
+    string toSend  = to_string(workers.size()) + "\n";
+    for(int i = 0 ; i < workers.size(); i++)
+        toSend += to_string(workers[i]) + "\n";
     toSend += sortOrNot ? "1\n" : "0\n";
     if(sortOrNot)
         toSend += (sortValue.first + "=" + sortValue.second + "\n");

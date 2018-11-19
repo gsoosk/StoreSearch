@@ -1,4 +1,5 @@
 #include "Tools.h"
+#include <iostream>
 using namespace std;
 vector<string> Tools :: splitByCharacter (string line, char character)
 {
@@ -28,4 +29,30 @@ string Tools :: removeAllSpaces(string line)
 {
 	line.erase(std::remove(line.begin(), line.end(), ' '), line.end());
 	return line;
+}
+
+bool Tools :: compare(string first, string second)
+{
+	bool res; 
+	if(isNumber(first))
+		return stoi(first) < stoi(second);
+	return first < second;
+}
+bool Tools :: isNumber(string s)
+{
+    std::string::const_iterator it = s.begin();
+    while (it != s.end() && std::isdigit(*it)) ++it;
+    return !s.empty() && it == s.end();
+}
+int Tools :: findSortValueIndex(vector < string > workerDetails, string sortValue)
+{
+    cerr << sortValue << "#"<<endl;
+    for(int i = 0 ; i < workerDetails.size() ; i++)
+    {
+        cerr << workerDetails[i] << "*" << endl;
+        if(workerDetails[i] == sortValue)
+            return i;
+    }
+    cerr << endl;
+    return -1;
 }

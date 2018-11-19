@@ -35,6 +35,7 @@ class Worker
 
     std :: vector < std :: vector < std :: string > > filesContent;
     int findFilterIndex(std :: string, int row);
-    
+
+    std :: string fifoPath;
     
 };

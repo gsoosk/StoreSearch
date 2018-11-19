@@ -8,17 +8,17 @@ using namespace std;
 int main()
 {
     string command;
-    getline(cin, command);
-    LoadBalancer loadBalancer(command);
+    for(getline(cin, command) ; command != "quit" ; getline(cin, command))
+    {
+        LoadBalancer loadBalancer(command);
 
-    loadBalancer.forkPresenter();
-    loadBalancer.sendPresenterDetails();
+        loadBalancer.createWorkerPipes();
+        loadBalancer.forkWorkers();
 
-    loadBalancer.createWorkerPipes();
-    loadBalancer.forkWorkers();
-    loadBalancer.writeOnWorkerPipes();
+        loadBalancer.forkPresenter();
+        loadBalancer.sendPresenterDetails();
 
-
-    for(getline(cin, command) ; command != "quit" ; getline(cin, command)){}
+        loadBalancer.writeOnWorkerPipes();
+    }
     return 0;
 }
