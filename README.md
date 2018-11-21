@@ -9,9 +9,13 @@ In project repository run `make` command to make project by g++.
 
 ## Inputs 
 After running `Search` executable file your inputs should be like this : 
-``` (<field name> = <corresponding filtering value> - )*( <sorting value = ascend/descend> - )? ￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼prc_cnt = n – dir = <relative dataset address> ```
+
+```(<field name> = <corresponding filtering value> - )*( <sorting value = ascend/descend> - )? ￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼prc_cnt = n – dir = <relative dataset address> ```
+
 And input files in input directory should be `*.dms` with contents like this : 
 
-```brand model ram hdd price 
+```
+brand model ram hdd price 
 apple pro 16 512 30
-apple pro 16 246 26```
+apple pro 16 246 26
+```
