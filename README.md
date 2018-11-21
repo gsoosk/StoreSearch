@@ -10,7 +10,9 @@ In project repository run `make` command to make project by g++.
 ## Inputs 
 After running `Search` executable file your inputs should be like this : 
 
-```(<field name> = <corresponding filtering value> - )*( <sorting value = ascend/descend> - )? ￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼prc_cnt = n – dir = <relative dataset address> ```
+```
+(<field name> = <corresponding filtering value> - )*( <sorting value = ascend/descend> - )? ￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼prc_cnt = n – dir = <relative dataset address> 
+```
 
 And input files in input directory should be `*.dms` with contents like this : 
 
